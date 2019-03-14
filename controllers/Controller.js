@@ -42,12 +42,73 @@ router.get('scrape', function(req,res){
                     Article.count({title: result.title}, function(err, test){
                         if(test==0){
                             var entry = new Article (result)
-                            
+                            entry.save(function(err,doc){
+                                if(err){
+                                    console.log(err);
+                                }else{
+                                    console.log(doc);
+                                }
+                            })
+
+                        }else{
+                            console.log('scraper working')
                         }
                     })
+                }else{
+                    console.log('scraper working');
                 }
+            }else{
+                console.log('scraper working');
             }
 
-        })
-    })
-})
+        });
+        res.redirect('/articles');
+    });
+});
+
+// Post route
+
+router.post('add/note/id:', function(req,res){
+    var articleID = req.params.id;
+    var noteAuthor = req.params.name;
+    var noteBody = req.body.comment
+
+    var result = {
+        author: noteAuthor,
+        content: noteBody
+    };
+
+    var entry = new Note (result);
+
+    entry.save(function(err, doc){
+        if(err){
+            console.log(err)
+        }else{
+            Article.findOneAndUpdate(
+                {'_id': articleID},
+                {$push:{'notes':doc._id}},
+                {new:true}
+                )
+                .exec(function(err,doc){
+                    if(err){
+                        console.log(err);
+                    }else{
+                        res.sendStatus(200);
+                    }
+                });
+        }
+    });
+});
+
+router.post('delete/note/id:', function(req, res){
+    var noteID = req.params.id;
+    Note.findByIdAndDelete(commentId, function(err, todo){
+        if(err){
+            console.log(err);
+        }else{
+            console.log("successfully removed note" + res.sendStatus(2000));
+        }
+    });
+});
+
+module.exports=router;
