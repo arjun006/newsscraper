@@ -8,7 +8,8 @@ var Note = require('../models/Note.js');
 var Article = require('../models/Article.js');
 
 router.get('/', function(req,res){
-    res.redirect('/scrape');
+    // res.redirect('/scrape');
+    res.render('/articles');
 });
 
 router.get('/articles', function(req,res){
@@ -25,15 +26,17 @@ router.get('/articles', function(req,res){
 });
 
 router.get('scrape', function(req,res){
-    request('http://news.google.com', function(error, response, html){
+    request('http://www.theonion.com/', function(error, response, html){
         var $ = cheerio.load(html);
+        console.log(response);
 
         var titlesArray=[];
 
         $('article .inner').each(function(i, element){
             var result = {};
+            console.log(result);
             result.title = $(this).children('header').children('h2').text().trim() + "";
-            result.link = 'http://news.google.com' + $(this).children('header').children('h2').children('a').attr("href").trim();
+            result.link = 'http://www.theonion.com' + $(this).children('header').children('h2').children('a').attr("href").trim();
             result.summary = $(this).children('div').text().trim() + "";
 
             if(result.title !== "" &&  result.summary !== ""){
