@@ -61,7 +61,7 @@ app.get('/scrape', function(req, res){
         console.log(html);
         var result={};
 
-        $('p').each(function(i,element){
+        $('article').each(function(i,element){
             var link = $(element).text();
             var heading = $(element).text();
             var summary = $(element).text();
@@ -103,7 +103,7 @@ app.post("/save/:id", function(req, res) {
 	Article.findById(req.params.id, function(err, data) {
 		if (data.isSaved) {
 			Article.findByIdAndUpdate(req.params.id, {$set: {isSaved: false, status: "Save Article"}}, {new: true}, function(err, data) {
-				res.redirect("/");
+                res.redirect("/saved");
 			});
 		}
 		else {
@@ -121,7 +121,7 @@ app.post('note/id:', function(err,data){
         Article.findByIdAndUpdate(req.params.id, {$set:{'note':doc._id}}, {new:true}, function(err,newdoc){
             if(err) throw err;
             else{
-                res.send(newdoc);
+                 res.send(newdoc);
             }
         });
     });

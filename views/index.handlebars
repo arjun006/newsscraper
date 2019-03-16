@@ -1,17 +1,51 @@
+
 {{#each articles}}
 <div class="story-body" id={{this._id}}>
-<h2>
+<h5>
 <a href="{{this.link}}" target="_blank">{{this.heading}}</a>
 <form action="/save/{{this._id}}" method="POST">
-<button type="submit" class="status" value="{{this.status}}">{{this.status}}</button>
+<button type="submit" class="status btn btn-primary" value="{{this.status}}">{{this.status}}Save Article!</button>
 {{#unless this.note}}
-<button type="button" class="addnote-button" value="{{this._id}}">Add A Note</button>
+<button type="button" class="addnote-button" value="{{this._id}}">Add Note</button>
 {{/unless}}
 {{#if this.note}}
 <button type="button" class="addnote-button" value="{{this._id}}">Edit Note</button>
 {{/if}}
 </form>
-</h2>
+</h5>
 <summary>{{this.summary}}</summary>
+<img class="media" src="{{this.img}}">
 </div>
+
+{{!-- <div class="card mb-5" style="max-width: 540px;" id={{this._id}}>
+  <div class="row no-gutters">
+    <div class="col-md-4">
+      <img src="..." class="card-img" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">
+            <a href="{{this.link}}" target="_blank">{{this.heading}}</a> 
+        </h5>
+        <p class="card-text">{{this.summary}}</p>
+          <form action='/save/{{this._id}}' method='POST'>
+
+        <button type='submit' class="btn btn-primary save-button" value='{{this.status}}'>Save Article</button>
+        {{#unless this.note}}
+            <button type="button" class="addnote-button btn btn-warning" value="{{this._id}}">Add Note</button>
+        {{/unless}}
+
+        {{#if this.note}}
+            <button type="button" class="addnote-button btn btn-warning" value="{{this._id}}">Edit Note</button>
+        {{/if}} 
+
+    </form>
+      </div>
+    </div>
+  </div>
+</div> --}}
 {{/each}}
+
+
+
+

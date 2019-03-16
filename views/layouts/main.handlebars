@@ -23,19 +23,28 @@
     {{!-- Nav Bar --}}
     <!-- Image and text -->
     <nav class="navbar navbar-light bg-light">
-        <a class="navbar-brand" href="#">
-            {{!-- <img src="/docs/4.3/assets/brand/bootstrap-solid.svg" width="30" height="30"
-                class="d-inline-block align-top" alt=""> --}}
+        <a class="navbar-brand" href="/">
             News Scraper
         </a>
+        
+        <a href="/saved"> 
+        <button>
+           Go to Saved Articles 
+        </button>
+        </a>
+       <a href='/'>
+        <button type="submit" id="refresh-articles">Scrape For Newest Articles</button>
+       </a>
+        
     </nav>
     <div class="container">
-        <form action="/scrape" method="GET">
-			<button type="submit" id="refresh-articles">Scrape For Newest Articles</button>
-		</form>
-        {{{body}}}
+        <div class='row'>
+            <form action="/scrape" method="GET">
+            </form>
+            {{{body}}}
+        </div>
     </div>
-    
+
 </body>
 
 </html>

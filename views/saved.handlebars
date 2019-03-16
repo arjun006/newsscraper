@@ -1,11 +1,14 @@
 {{#each saved}}
-<div id="{{this.id}}">
+<div class='row'>
+    <div id="{{this.id}}">
     <h3>
-        <a href="{{this.link}}" target='_blank'></a>
-        <form action="/save/{{this._id}}" method="POST">
-<button type="submit" class="status" value="{{this.status}}">{{this.status}}</button>
-</form>
+    <a href="{{this.link}}" target='_blank'>{{this.heading}}</a>
     </h3>
     <summary>{{this.summary}}</summary>
+     <form action="/save/{{this._id}}" method="POST">
+    <button type="submit" class="status btn btn-primary" value="{{this.status}}">Remove Article</button>
+</form>
 </div>
+</div>
+
 {{/each}}
