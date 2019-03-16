@@ -53,7 +53,7 @@ app.get('/', function(req,res){
         res.render("index", {articles: data});
 	});
 });
-
+// Get Scrape Route
 app.get('/scrape', function(req, res){
     request('https://www.nytimes.com/section/business', function(error,response,html){
         if (!error && response.statusCode == 200)
@@ -83,32 +83,31 @@ app.get('/scrape', function(req, res){
         console.log(result);
     });
 });
-
+// Get Saved Route
 app.get('/saved', function(req,res){
     Article.find({isSaved: true}, null,{sort:{created:-1}},function(err, data){
-        if(data.length===0){
-            res.render('placeholder',{message:"There are no saved articles"});
-        }else{
             res.render('saved',{saved:data});
-        }
+            console.log(data);
+        
     });
 });
 
 app.get('/:id', function(req,res){
     Article.findById(req.params.id, function(err,data){
-
+        if (err) throw (err);
+        res.json(data);
     });
 });
 
 app.post("/save/:id", function(req, res) {
 	Article.findById(req.params.id, function(err, data) {
-		if (data.issaved) {
-			Article.findByIdAndUpdate(req.params.id, {$set: {issaved: false, status: "Save Article"}}, {new: true}, function(err, data) {
+		if (data.isSaved) {
+			Article.findByIdAndUpdate(req.params.id, {$set: {isSaved: false, status: "Save Article"}}, {new: true}, function(err, data) {
 				res.redirect("/");
 			});
 		}
 		else {
-			Article.findByIdAndUpdate(req.params.id, {$set: {issaved: true, status: "Saved"}}, {new: true}, function(err, data) {
+			Article.findByIdAndUpdate(req.params.id, {$set: {isSaved: true, status: "Saved"}}, {new: true}, function(err, data) {
 				res.redirect("/saved");
 			});
 		}

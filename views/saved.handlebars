@@ -1,0 +1,11 @@
+{{#each saved}}
+<div id="{{this.id}}">
+    <h3>
+        <a href="{{this.link}}" target='_blank'></a>
+        <form action="/save/{{this._id}}" method="POST">
+<button type="submit" class="status" value="{{this.status}}">{{this.status}}</button>
+</form>
+    </h3>
+    <summary>{{this.summary}}</summary>
+</div>
+{{/each}}
