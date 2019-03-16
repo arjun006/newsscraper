@@ -1,7 +1,33 @@
-{{#each articles}}
+{{!-- {{#each articles}}
+<div class='container'>
+    <div class='row'>
+        <h2>
+            {{this.title}}
+        </h2>
+        {{this.body}}
+    </div>
+    <div>{{this.summary}}</div>
+</div>
     {{updated}}
     {{title}}
     {{summary}}
 
     {{link}}
+{{/each}} --}}
+{{#each articles}}
+<div class="story-body" id={{this._id}}>
+<h2>
+<a href="{{this.link}}" target="_blank">{{this.heading}}</a>
+<form action="/save/{{this._id}}" method="POST">
+<button type="submit" class="status" value="{{this.status}}">{{this.status}}</button>
+{{#unless this.note}}
+<button type="button" class="addnote-button" value="{{this._id}}">Add A Note</button>
+{{/unless}}
+{{#if this.note}}
+<button type="button" class="addnote-button" value="{{this._id}}">Edit Note</button>
+{{/if}}
+</form>
+</h2>
+<summary>{{this.summary}}</summary>
+</div>
 {{/each}}

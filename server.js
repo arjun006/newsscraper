@@ -2,6 +2,7 @@ var express = require("express");
 var exphbs = require("express-handlebars");
 var bodyParser = require("body-parser");
 var mongoose = require('mongoose');
+var axios = require("axios");
 var logger = require('morgan');
 var cheerio = require('cheerio');
 var request = require('request');
@@ -29,7 +30,7 @@ if(process.env.NODE_ENV == 'production'){
     mongoose.connect(MONGODB_URI);
   }
 
-
+mongoose.Promise=Promise;
 var db = mongoose.connection;
 db.on('error', function(err) {
     console.log('Mongoose Error: ', err);
@@ -46,20 +47,33 @@ console.log('Running on port: ' + port);
 
 // Routes
 app.get('/', function(req,res){
-    res.redirect('/articles');
+    Article.find({}, null, {sort: {created: -1}}, function(err, data) {
+		// if(data.length === 0) {
+		// 	res.render("placeholder", {message: "Click scrape to get new articles!"});
+		// }
+		// else{
+		// 	res.render("index", {articles: data});
+        // }
+        res.render("index", {articles: data});
+	});
 });
 
-app.get('/scrape', function(req,res){
-    request("https://nytimes.com", function(error, response, html){
-        var $=cheerio.load(html);
-        var result = {};
-        $('div .story-body').each(function(i, element){
-            var title = $(element).find('h2 .headline').text().trim();
-            var body = $(element).find('p .summary').text();
-            var link = $(element).find('a').attr('href')
-            
-            var entry = new Article(result)
-            Article.find({title:result.title},function(err,data){
+app.get('/scrape', function(req, res){
+    request('https://www.nytimes.com/section/business', function(error,response,html){
+        var $ = cheerio.load(html);
+        var result={};
+
+        $('article').each(function(i,element){
+            var link = $(element).children('a').attr('href');
+            var heading = $(element).children('h2').text().trim();
+            var summary = $(element).children('p').text().trim();
+
+            result.summary = summary;
+            result.heading = heading;
+            result.link = link;
+
+            var entry = new Article(result);
+            Article.find({heading: result.heading}, function(err,data){
                 if(data.length===0){
                     entry.save(function(err,data){
                         if(err) throw(err);
@@ -67,7 +81,8 @@ app.get('/scrape', function(req,res){
                 }
             });
         });
-
+        res.redirect('/');
+        console.log(result);
     });
 });
 
