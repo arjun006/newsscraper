@@ -1,6 +1,7 @@
 var express = require("express");
 var exphbs = require("express-handlebars");
-var bodyParser = require("body-parser");
+var method = require("method-override");
+var body = require("body-parser");
 var mongoose = require('mongoose');
 var axios = require("axios");
 var logger = require('morgan');
@@ -10,8 +11,10 @@ var request = require('request');
 
 
 var app = express();
+
+app.use(body.urlencoded({extended: false}));
+app.use(method("_method"));
 app.use(logger("dev"));
-app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static("public"));
 app.engine('handlebars', exphbs({defaultLayout: "main"}));
@@ -19,15 +22,14 @@ app.set('view engine', 'handlebars');
 
 var Note = require('./models/Note.js');
 var Article = require('./models/Article.js');
-var databaseUrl="mongodb://localhost/newsscraper"
+var databaseUrl="mongodb://localhost/newsscraper";
 
 // Connect to the Mongo DB
-if(process.env.NODE_ENV == 'production'){
-    mongoose.connect('mongodb://heroku_3t5r3m9q:<dbpassword>@ds151528.mlab.com:51528/heroku_3t5r3m9q', { useNewUrlParser: true });
+if(process.env.MONGODB_URI){
+    mongoose.connect(process.env.MONGODB_URI)
   }
   else{
-    var MONGODB_URI = process.env.MONGODB_URI || databaseUrl;
-    mongoose.connect(MONGODB_URI);
+    mongoose.connect(databaseUrl);
   }
 
 mongoose.Promise=Promise;
@@ -48,25 +50,21 @@ console.log('Running on port: ' + port);
 // Routes
 app.get('/', function(req,res){
     Article.find({}, null, {sort: {created: -1}}, function(err, data) {
-		// if(data.length === 0) {
-		// 	res.render("placeholder", {message: "Click scrape to get new articles!"});
-		// }
-		// else{
-		// 	res.render("index", {articles: data});
-        // }
         res.render("index", {articles: data});
 	});
 });
 
 app.get('/scrape', function(req, res){
     request('https://www.nytimes.com/section/business', function(error,response,html){
+        if (!error && response.statusCode == 200)
         var $ = cheerio.load(html);
+        console.log(html);
         var result={};
 
-        $('article').each(function(i,element){
-            var link = $(element).children('a').attr('href');
-            var heading = $(element).children('h2').text().trim();
-            var summary = $(element).children('p').text().trim();
+        $('p').each(function(i,element){
+            var link = $(element).text();
+            var heading = $(element).text();
+            var summary = $(element).text();
 
             result.summary = summary;
             result.heading = heading;
